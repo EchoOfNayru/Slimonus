@@ -6,6 +6,7 @@ public class PlatformVelocity : MonoBehaviour
 {
 
     public float waveDelayTime;
+    private float deleteThis;
 
     // Use this for initialization
     void Start()
