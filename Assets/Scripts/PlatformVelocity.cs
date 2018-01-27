@@ -20,16 +20,19 @@ public class PlatformVelocity : MonoBehaviour
 
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        WaveDelay(waveDelayTime, collision.collider);
+        Debug.Log("done a thing");
+        StartCoroutine(WaveDelay(waveDelayTime, other));
     }
 
     private IEnumerator WaveDelay(float delayTime, Collider other)
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
+        Rigidbody rb = other.GetComponent<Rigidbody>();
         Vector3 VelocityStorage = rb.velocity;
+        VelocityStorage.y *= -0.83f;
         yield return new WaitForSeconds(delayTime);
-        rb.AddForce(VelocityStorage);
+        rb.AddForce(VelocityStorage, ForceMode.Impulse);
+        Debug.Log(VelocityStorage);
     }
 }
