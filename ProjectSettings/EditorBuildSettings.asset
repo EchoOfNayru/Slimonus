@@ -8,3 +8,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/GameScene.unity
     guid: 848e5557b7571de43a8b618c6c841bbd
+  - enabled: 1
+    path: Assets/_Scenes/main_menu.unity
+    guid: f247b8abaff001846a6506811afba1bf
+  - enabled: 1
+    path: Assets/_Scenes/achievments.unity
+    guid: 5a2d70f72063301479f02e466e8c48cf
+  - enabled: 1
+    path: Assets/_Scenes/upgrades.unity
+    guid: a895d3826e9b1a44bab8498ea864ba2b
