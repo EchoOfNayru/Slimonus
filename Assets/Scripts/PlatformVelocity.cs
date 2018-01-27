@@ -6,7 +6,6 @@ public class PlatformVelocity : MonoBehaviour
 {
 
     public float waveDelayTime;
-    private float deleteThis;
 
     // Use this for initialization
     void Start()
@@ -31,6 +30,7 @@ public class PlatformVelocity : MonoBehaviour
         Rigidbody rb = other.GetComponent<Rigidbody>();
         Vector3 VelocityStorage = rb.velocity;
         VelocityStorage.y *= -0.83f;
+        rb.velocity = new Vector3(0, 0, 0);
         yield return new WaitForSeconds(delayTime);
         rb.AddForce(VelocityStorage, ForceMode.Impulse);
         Debug.Log(VelocityStorage);
