@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaveController : MonoBehaviour
+public class PlatformVelocity : MonoBehaviour
 {
 
     public float waveDelayTime;
+    private float deleteThis;
 
     // Use this for initialization
     void Start()
@@ -19,14 +20,16 @@ public class WaveController : MonoBehaviour
 
     }
 
-    void OnTriggerEnter(Collider collider)
+    void OnCollisionEnter(Collision collision)
     {
-        WaveDelay(waveDelayTime, collider);
+        WaveDelay(waveDelayTime, collision.collider);
     }
 
-    private IEnumerator WaveDelay(float delayTime, Collider collider)
+    private IEnumerator WaveDelay(float delayTime, Collider other)
     {
-
+        Rigidbody rb = GetComponent<Rigidbody>();
+        Vector3 VelocityStorage = rb.velocity;
         yield return new WaitForSeconds(delayTime);
+        rb.AddForce(VelocityStorage);
     }
 }
