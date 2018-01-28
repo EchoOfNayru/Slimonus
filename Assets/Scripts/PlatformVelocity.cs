@@ -7,10 +7,13 @@ public class PlatformVelocity : MonoBehaviour
 
     public float waveDelayTime;
 
+    private Vector3 velocityStorage;
+    //private
+
     // Use this for initialization
     void Start()
     {
-
+        velocityStorage = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -19,20 +22,8 @@ public class PlatformVelocity : MonoBehaviour
 
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("done a thing");
-        StartCoroutine(WaveDelay(waveDelayTime, other));
-    }
-
-    private IEnumerator WaveDelay(float delayTime, Collider other)
-    {
-        Rigidbody rb = other.GetComponent<Rigidbody>();
-        Vector3 VelocityStorage = rb.velocity;
-        VelocityStorage.y *= -0.83f;
-        rb.velocity = new Vector3(0, 0, 0);
-        yield return new WaitForSeconds(delayTime);
-        rb.AddForce(VelocityStorage, ForceMode.Impulse);
-        Debug.Log(VelocityStorage);
+        collision.collider.GetComponent<Rigidbody>();
     }
 }

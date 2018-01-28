@@ -15,5 +15,9 @@ public class CameraContorller : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = new Vector3(target.transform.position.x + offset, target.transform.position.y, -10);
+        if(target.transform.position.y <= 5)
+        {
+            transform.position = new Vector3(target.transform.position.x + offset, 5, -10);
+        }
 	}
 }

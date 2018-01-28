@@ -4,67 +4,106 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    public bool onPlatform;
-    public float xSpeed;
+    Rigidbody rb;
+
+    public GameObject DestroyThis;
+
+    public float slamSpeed = 50;
+    public float jumpSpeed = 25;
+    public float maxSpeed = 15;
+    public bool onLauncher;
+
+    public bool canJump = false;
+    private bool jump = false;
+    private bool slam = false;
 
 	// Use this for initialization
 	void Start () {
-        onPlatform = true;
+        rb = GetComponent<Rigidbody>();
+        onLauncher = true;
 	}
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown("d"))
+        {
+            rb.AddForce(10, 0, 0);
+        }
+        if (Input.GetKeyDown("space") && !onLauncher)
+        {
+            rb.velocity = Vector3.zero;
+            //rb.useGravity = false;
+            slam = true;
+
+        }
+        if(transform.position.y <= 0.2)
+        {
+            Destroy(DestroyThis);
+            Application.LoadLevel(Application.loadedLevel);
+        }
+        if (Input.GetKeyDown("space") && canJump && !onLauncher)
+        {
+            slam = false;
+            jump = true;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+
+        if (horizontal * rb.velocity.x < maxSpeed)
+        {
+            rb.AddForce(Vector3.right * horizontal * 30f);
+        }
+
+        if (Mathf.Abs(rb.velocity.x) > maxSpeed)
+        {
+            rb.velocity = new Vector3(Mathf.Sign(rb.velocity.x) * maxSpeed, rb.velocity.y);
+        }
+        if (jump)
+            {
+                rb.AddForce(new Vector3(10, jumpSpeed,0));
+                jump = false;
+            }
+        
+        if(slam)
+        {
+            
+               // rb.useGravity = true;
+                rb.AddForce(0, -slamSpeed, 0);
+                //slam = false;
+            
+        }
 
     }
 
-	void FixedUpdate () {
-        Rigidbody rb = this.GetComponent<Rigidbody>();
-        if (Input.GetAxis("Horizontal") == 1 && !onPlatform)
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.collider.tag == "Platform" || collision.collider.tag == "Launcher")
         {
-            rb.AddForce(transform.right);
+      
+            onLauncher = false;
+            
         }
-        else if (Input.GetAxis("Horizontal") == -1 && !onPlatform)
-        {
-            rb.AddForce(transform.right *= -1);
-        }
+        canJump = false;
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        onPlatform = true;
+        if (collision.collider.tag == "Platform")
+        {
+            canJump = true;
+        }
+
     }
 
-    void OnCollisionExit(Collision coliision)
+    void OntriggerEnter(Collision other)
     {
-        onPlatform = false;
-        StartCoroutine(Slam());
-    }
-
-    private IEnumerator Slam()
-    {
-        while (!Input.GetKeyDown("space"))
+        if (other.collider.tag == "Despawner")
         {
-            yield return null;
-            if (onPlatform)
-            {
-                break;
-            }
+            Destroy(DestroyThis);
         }
-        Rigidbody rb = this.GetComponent<Rigidbody>();
-        //slam direction always goes down
-        Vector3 slamDir = new Vector3(0,0,0);
-        xSpeed = rb.velocity.x;
-        if (rb.velocity.y >= 0)
-        {
-            slamDir = new Vector3(0, rb.velocity.y + rb.velocity.x, 0);
-        }
-        if (rb.velocity.y < 0)
-        {
-            slamDir = new Vector3(0, (-1 * rb.velocity.y) + rb.velocity.x, 0);
-        }
-        rb.velocity = new Vector3(0, 0, 0);
-        rb.velocity = new Vector3(0, 0, 0);
-        rb.AddForce(-slamDir, ForceMode.Impulse);
     }
 }
