@@ -1,12 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
     Rigidbody rb;
 
     public GameObject DestroyThis;
+    public Renderer rend;
+    public GameObject arrow;
+
+    private int score = 0;
+    public Text ScoreTxt;
 
     public float slamSpeed = 50;
     public float jumpSpeed = 25;
@@ -21,11 +27,18 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
         rb = GetComponent<Rigidbody>();
         onLauncher = true;
+        rend = GetComponent<Renderer>();
+        ScoreTxt.text = "Score :" + score.ToString();
 	}
 
     // Update is called once per frame
     void Update()
     {
+        arrow.transform.position = new Vector3(transform.position.x + 0.5f, 9f, 0);
+        if (!rend.isVisible)
+        {
+           
+        }
         if (Input.GetKeyDown("d"))
         {
             rb.AddForce(10, 0, 0);
@@ -39,6 +52,7 @@ public class PlayerController : MonoBehaviour {
         }
         if(transform.position.y <= 0.2)
         {
+            
             Destroy(DestroyThis);
             Application.LoadLevel(Application.loadedLevel);
         }
@@ -47,6 +61,8 @@ public class PlayerController : MonoBehaviour {
             slam = false;
             jump = true;
         }
+
+        ScoreTxt.text = "Score :" + score.ToString();
     }
 
     void FixedUpdate()
@@ -90,10 +106,35 @@ public class PlayerController : MonoBehaviour {
         canJump = false;
     }
 
+    void OnCollisionStay(Collision collision)
+    {
+        if (collision.collider.tag == "Platform" || collision.collider.tag == "Launcher")
+        {
+            Debug.Log(collision.gameObject.GetComponent<Renderer>().material.name);
+            if (collision.gameObject.GetComponent<Renderer>().material.name != "ToonTest2")
+            {
+                Debug.Log(collision.gameObject.GetComponent<Renderer>().material.name);
+                //collision.gameObject.GetComponent<Renderer>().material = matShader;
+
+            }
+
+            if (collision.gameObject.GetComponent<Renderer>().material.HasProperty("_FresnelScale"))
+            {
+                Debug.Log("gophjgp");
+                float tst = collision.gameObject.GetComponent<Renderer>().material.GetFloat("_FresnelScale");
+                //  tst += Time.deltaTime;
+                if (collision.gameObject.GetComponent<Renderer>().material.GetFloat("_FresnelScale") <=1)
+                collision.gameObject.GetComponent<Renderer>().sharedMaterial.SetFloat("_FresnelScale", tst += Time.deltaTime * 4);
+            }
+        }
+
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.tag == "Platform")
         {
+            score += 100;
             canJump = true;
         }
 
